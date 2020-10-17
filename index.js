@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+const port = 5000;
 const MongoClient = require('mongodb').MongoClient;
 
 require('dotenv').config();
@@ -115,4 +116,4 @@ app.post("/addCourse", (req, res) => {
 
 
 
-app.listen(5000);
+app.listen(process.env.PORT || port);
