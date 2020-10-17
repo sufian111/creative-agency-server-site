@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+
 const MongoClient = require('mongodb').MongoClient;
+
 require('dotenv').config();
 // const config = require("./config.js");
 
@@ -11,62 +13,106 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//mongo 
-const uri = "mongodb+srv://AMBB:ttEpNYtoulsJoTtr@cluster0.jc2nk.mongodb.net/creative-DB?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
 
 
 //default root folder
 app.get('/', (req, res) => {
-    res.send('ABU HASAN');
+    res.send('Database success ');
 })
 
 
+var uri = "mongodb://FINAL:h4zxVfMAeFJ8ysqM@cluster0-shard-00-00.jc2nk.mongodb.net:27017,cluster0-shard-00-01.jc2nk.mongodb.net:27017,cluster0-shard-00-02.jc2nk.mongodb.net:27017/creative-DB?ssl=true&replicaSet=atlas-m4sdfp-shard-0&authSource=admin&retryWrites=true&w=majority";
+MongoClient.connect(uri,{useUnifiedTopology: true},  function(err, client) {
+  const collectionOrder = client.db("creative-DB").collection("order-CT");
+  const collectionCourse = client.db("creative-DB").collection("course-CT");
+  const collectionFeedback = client.db("creative-DB").collection("feedback-CT");
+  console.log("database success")
 
+//  getAll Order  
+  app.get("/allOrder", (req, res) => {
+    collectionOrder.find({}).toArray((err, documents) => {
+      res.send(documents);
+    });
+  });
 
+// add order to database 
 
+app.post("/addOrder", (req, res) => {
 
-// client.connect(err => {
-//   const collection = client.db("creative-DB").collection("order-CT");
-//   console.log('object');
- 
-//   const AbuName = "Abu HASAN";
-//   collection.insertOne({AbuName})
-//   .then(() => {
-//       console.log('name inser');
-//   })
-// });
+  const order = req.body;
+  collectionOrder.insertOne(order);
 
-
-
-
-
-
-client.connect(err => {
-    const patientCollection = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_PATIENT}`);
-    console.log('data base Connect Success');
-
-    const AbuHasan = 'ABU Foinl comment';
-    patientCollection.insertOne({AbuHasan})
-    .then(() => {
-        console.log("name inserted");
-    })
-
-    //post
-    app.get('/createPatientAppointment', (req, res) => {
-        patientCollection.find({})
-        .toArray((err, docs) => {
-            res.send(docs);
-        })
-    })
-
-    //get
-
-    //update
-
-    //delete
-    // client.close() 
+  
 });
+
+//my order in database
+app.get("/myOrder", (req, res) => {
+  collectionOrder.find({ email: req.query.email }).toArray((err, documents) => {
+    res.send(documents);
+  });
+});
+
+
+
+
+// getAll feedBack
+app.get("/allFeedback", (req, res) => {
+  collectionFeedback.find({}).toArray((err, documents) => {
+    res.send(documents);
+  });
+});
+
+// add course to database
+app.post("/addFeedback", (req, res) => {
+  const feedBack = req.body;
+  collectionFeedback.insertOne(feedBack);
+});
+
+
+
+// getAll Course
+app.get("/allCourse", (req, res) => {
+  collectionCourse.find({}).toArray((err, documents) => {
+    res.send(documents);
+  });
+});
+
+
+// add course to database
+app.post("/addCourse", (req, res) => {
+  const course = req.body;
+  collectionCourse.insertOne(information);
+});
+
+
+
+
+
+  app.delete("/delete/:id", (req, res) => {
+    registartions.deleteOne({ _id: ObjectId(req.params.id) }).then((result) => {
+      res.send(result.deletedCount > 0);
+    });
+  });
+
+  app.get("/admin", (req, res) => {
+    registartions.find({}).toArray((err, documents) => {
+      res.send(documents);
+    });
+  });
+
+  
+
+  
+
+  app.post("/addRegistration", (req, res) => {
+    const information = req.body;
+    registartions.insertOne(information);
+  });
+
+
+    
+});
+
+
 
 app.listen(5000);
